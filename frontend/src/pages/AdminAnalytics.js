@@ -1,3 +1,4 @@
+const BASE_URL = process.env.REACT_APP_API_URL;
 import { useEffect, useState } from "react";
 import { BarChart3, Users, Cpu, Bell, Landmark, Thermometer, Droplets, FlaskConical } from "lucide-react";
 
@@ -8,9 +9,9 @@ export default function AdminAnalytics() {
     const load = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/admin/analytics", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+      const res = await fetch(`${BASE_URL}/api/admin/analytics`, {
+  headers: { Authorization: `Bearer ${token}` },
+});
         const data = await res.json();
         setAnalytics(data.analytics || null);
       } catch {
