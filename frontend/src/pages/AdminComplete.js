@@ -79,12 +79,12 @@ const AdminComplete = () => {
       const token = localStorage.getItem("token");
       
       // Fetch all users
-      const usersResponse = await fetch("http://localhost:5000/api/admin/users", {
+      const usersResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       // Fetch system stats
-      const statsResponse = await fetch("http://localhost:5000/api/admin/stats", {
+      const statsResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/stats`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -133,7 +133,7 @@ const AdminComplete = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:5000/api/admin/users/${userId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/users/${userId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -155,7 +155,7 @@ const AdminComplete = () => {
   const handleToggleUserStatus = async (userId, currentStatus) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:5000/api/admin/users/${userId}/toggle-status`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/users/${userId}/toggle-status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -190,7 +190,7 @@ const AdminComplete = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/admin/users/bulk-action", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/users/bulk-action`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
