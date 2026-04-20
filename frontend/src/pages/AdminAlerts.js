@@ -44,7 +44,7 @@ const AdminAlerts = () => {
     if (!silent) setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/admin/alerts", {
+      const res = await fetch("https://smart-agri-backend-4111.onrender.com/api/admin/alerts", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -63,7 +63,7 @@ const AdminAlerts = () => {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/admin/users", {
+      const res = await fetch("https://smart-agri-backend-4111.onrender.com/api/admin/users", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -86,7 +86,7 @@ const AdminAlerts = () => {
   const createAlert = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
-    await fetch("http://localhost:5000/api/admin/alerts", {
+    await fetch("https://smart-agri-backend-4111.onrender.com/api/admin/alerts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -110,7 +110,7 @@ const AdminAlerts = () => {
 
   const handleAdminResolve = (id) => {
     const token = localStorage.getItem("token");
-    fetch(`http://localhost:5000/api/admin/alerts/${id}/resolve`, {
+    fetch(`https://smart-agri-backend-4111.onrender.com/api/admin/alerts/${id}/resolve`, {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}` },
     }).then(() => fetchAlerts());
@@ -121,8 +121,8 @@ const AdminAlerts = () => {
     if (!current) return;
     if (current.source === "manual") {
       const token = localStorage.getItem("token");
-      fetch(`http://localhost:5000/api/admin/alerts/${id}`, {
-        method: "DELETE",
+      fetch(`https://smart-agri-backend-4111.onrender.com/api/admin/alerts/${id}`, {
+       method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       }).then(() => fetchAlerts());
       return;
