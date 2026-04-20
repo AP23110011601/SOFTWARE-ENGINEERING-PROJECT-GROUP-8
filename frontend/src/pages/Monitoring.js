@@ -59,7 +59,7 @@ const Monitoring = () => {
   const fetchSystemHealth = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/monitoring/health", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/monitoring/health`,{
         headers: {
           Authorization: `Bearer ${token}`,
         },
