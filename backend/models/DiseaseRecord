@@ -1,0 +1,22 @@
+const mongoose = require("mongoose");
+
+const diseaseSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    index: true
+  },
+  image: String,
+  imageUrl: String,
+  diseaseName: String,
+  confidence: Number,
+  severity: String,
+  suggestions: String,
+  analysis: mongoose.Schema.Types.Mixed,
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+module.exports = mongoose.model("DiseaseRecord", diseaseSchema);
