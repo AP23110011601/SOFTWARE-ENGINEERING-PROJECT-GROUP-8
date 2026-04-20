@@ -49,7 +49,7 @@ const Dashboard = () => {
   const fetchDashboardData = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/apisensor`,{
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/sensor`,{
         headers: {
           Authorization: `Bearer ${token}`,
         },
