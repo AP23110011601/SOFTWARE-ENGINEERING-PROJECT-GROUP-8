@@ -50,12 +50,12 @@ const AlertsPage = () => {
     try {
       const token = localStorage.getItem("token");
       if (generateFresh) {
-        await fetch("http://localhost:5000/api/sensor/generate", {
+        await  fetch(`${process.env.REACT_APP_API_URL}/api/sensor/generate`, {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` }
         });
       }
-      const response = await fetch("http://localhost:5000/api/alerts", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/alerts`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await response.json();
@@ -80,8 +80,7 @@ const AlertsPage = () => {
     const token = localStorage.getItem("token");
     if (alert.source === "admin" && alert.adminAlertId) {
       try {
-        const res = await fetch(
-          `http://localhost:5000/api/alerts/resolve/${encodeURIComponent(alert.adminAlertId)}`,
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/alerts/resolve/${encodeURIComponent(alert.adminAlertId)}`, 
           {
             method: "PUT",
             headers: { Authorization: `Bearer ${token}` }
