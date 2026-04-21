@@ -18,7 +18,7 @@ export default function AdminSchemes() {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/admin/schemes", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/schemes`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -40,7 +40,7 @@ export default function AdminSchemes() {
     setSaving(true);
     try {
       const token = localStorage.getItem("token");
-      await fetch("http://localhost:5000/api/admin/schemes", {
+      await  fetch(`${process.env.REACT_APP_API_URL}/api/admin/schemes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -57,7 +57,7 @@ export default function AdminSchemes() {
 
   const deleteScheme = async (id) => {
     const token = localStorage.getItem("token");
-    await fetch(`http://localhost:5000/api/admin/schemes/${id}`, {
+    await fetch(`${process.env.REACT_APP_API_URL}/api/admin/schemes/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
