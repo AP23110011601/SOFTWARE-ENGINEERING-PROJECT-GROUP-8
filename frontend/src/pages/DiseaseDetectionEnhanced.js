@@ -49,7 +49,7 @@ const DiseaseDetectionEnhanced = () => {
 
   const fetchModelInfo = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/custom-ml/model-info");
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/custom-ml/model-info`);
       const data = await response.json();
       setModelInfo(data.model);
     } catch (error) {
@@ -60,7 +60,7 @@ const DiseaseDetectionEnhanced = () => {
   const fetchHistory = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/custom-ml/history", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/custom-ml/history`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -104,7 +104,7 @@ const DiseaseDetectionEnhanced = () => {
       formData.append("userId", user?.id || user?._id || "");
 
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/custom-ml/analyze-custom", {
+      const response = await  fetch(`${process.env.REACT_APP_API_URL}/api/custom-ml/analyze-custom`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
