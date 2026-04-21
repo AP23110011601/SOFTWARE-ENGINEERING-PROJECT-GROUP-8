@@ -65,7 +65,7 @@ const AdminSettings = () => {
     setSaving(true);
     try {
       const token = localStorage.getItem("token");
-      await fetch("http://localhost:5000/api/admin/settings", {
+      await fetch(`${process.env.REACT_APP_API_URL}/api/admin/settings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
