@@ -27,12 +27,12 @@ const CropRecommendation = () => {
     try {
       const token = localStorage.getItem('token');
       if (generateFresh) {
-        await fetch("http://localhost:5000/api/sensor/generate", {
+        await  fetch(`${process.env.REACT_APP_API_URL}/api/sensor/generate`, {
           method: "POST",
           headers: { "Authorization": `Bearer ${token}` }
         });
       }
-      const res = await fetch("http://localhost:5000/api/sensor/latest", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/sensor/latest`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       const data = await res.json();
@@ -68,7 +68,7 @@ const CropRecommendation = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/crop", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/crop`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
