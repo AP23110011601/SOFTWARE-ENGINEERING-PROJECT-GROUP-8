@@ -41,7 +41,7 @@ else:
 # ─────────────────────────────────────────────
 # LOAD DISEASE MODEL  (TensorFlow / Keras)
 # ─────────────────────────────────────────────
-DISEASE_MODEL_PATH = "disease_model.h5"
+DISEASE_MODEL_PATH = "best_disease_model.h5"
 CLASS_NAMES_PATH   = "class_names.txt"
 
 if os.path.exists(DISEASE_MODEL_PATH):
