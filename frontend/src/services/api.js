@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000/api"; // your backend URL
+
 
 // 🔐 Get token (later from login)
 const getToken = () => {
@@ -8,7 +8,7 @@ const getToken = () => {
 // 📡 Fetch recommendations
 export const getRecommendations = async () => {
   try {
-    const res = await fetch(`${BASE_URL}/recommendations`, {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/recommendations`, {
       headers: {
         Authorization: `Bearer ${getToken()}`,
       },
