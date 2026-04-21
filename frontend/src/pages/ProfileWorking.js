@@ -27,7 +27,7 @@ const Profile = () => {
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/profile/profile", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/profile/profile`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await response.json();
@@ -54,7 +54,7 @@ const Profile = () => {
   const fetchSensorSummary = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/sensor/latest", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/sensor/latest`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await response.json();
@@ -80,7 +80,7 @@ const Profile = () => {
     setStatusMessage("");
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/profile/update-profile", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/profile/update-profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
