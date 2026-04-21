@@ -14,20 +14,20 @@ const DashboardProduct = () => {
       const token = localStorage.getItem('token');
       if (!token) return navigate('/login');
       if (generateFresh) {
-        await fetch("http://localhost:5000/api/sensor/generate", {
+        await  fetch(`${process.env.REACT_APP_API_URL}/api/sensor/generate`, {
           method: "POST",
           headers: { "Authorization": `Bearer ${token}` }
         });
       }
 
-      const res = await fetch("http://localhost:5000/api/sensor", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/sensor`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       let json = await res.json();
 
       // Fallback to latest endpoint if dashboard payload is unavailable
       if (!json?.latest) {
-        const latestRes = await fetch("http://localhost:5000/api/sensor/latest", {
+        const latestRes = await fetch(`${process.env.REACT_APP_API_URL}/api/sensor/latest`, {
           headers: { "Authorization": `Bearer ${token}` }
         });
         const latestJson = await latestRes.json();
@@ -47,7 +47,7 @@ const DashboardProduct = () => {
       }
 
       if (json?.latest && (json.latest.avgMoisture ?? 0) === 0 && !generateFresh) {
-        await fetch("http://localhost:5000/api/sensor/generate", {
+        await fetch(`${process.env.REACT_APP_API_URL}/api/sensor/generate`, {
           method: "POST",
           headers: { "Authorization": `Bearer ${token}` }
         });
