@@ -9,6 +9,7 @@ import { AlertCircle, ArrowUpRight, ArrowDownRight, RefreshCcw } from 'lucide-re
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 // Mapping pathnames to nice titles
+
 const getTitleInfo = (pathname) => {
   const parts = pathname.split('/').pop().replace(/-/g, ' ');
   return parts.replace(/\b\w/g, c => c.toUpperCase());
