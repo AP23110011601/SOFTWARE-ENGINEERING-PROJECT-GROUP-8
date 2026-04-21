@@ -18,13 +18,14 @@ const SoilEnvironment = () => {
 
       if (generateFresh) {
         setRefreshing(true);
-        await fetch("http://localhost:5000/api/sensor/generate", {
+        await fetch(`${process.env.REACT_APP_API_URL}/api/sensor/generate`, {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` }
         });
       }
 
-      let response = await fetch("http://localhost:5000/api/sensor/latest", {
+      let response = await fetch(`${process.env.REACT_APP_API_URL}/api/sensor/latest`, {
+        
         headers: { Authorization: `Bearer ${token}` }
       });
       let data = await response.json();
@@ -33,7 +34,7 @@ const SoilEnvironment = () => {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` }
         });
-        response = await fetch("http://localhost:5000/api/sensor/latest", {
+        response = await fetch(`${process.env.REACT_APP_API_URL}/api/sensor/latest`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         data = await response.json();
