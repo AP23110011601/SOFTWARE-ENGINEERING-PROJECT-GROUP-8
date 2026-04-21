@@ -108,7 +108,7 @@ export default function GovernmentSchemes() {
     const loadSchemes = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/schemes", {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/schemes`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
