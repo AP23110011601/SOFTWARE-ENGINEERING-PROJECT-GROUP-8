@@ -28,21 +28,21 @@ const AdminPanel = () => {
       const token = localStorage.getItem("token");
       
       // Fetch all users
-      const usersResponse = await fetch("http://localhost:5000/api/admin/users", {
+      const usersResponse = await  fetch(`${process.env.REACT_APP_API_URL}/api/admin/users`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       
       // Fetch all sensor data
-      const sensorResponse = await fetch("http://localhost:5000/api/admin/sensor-data", {
+      const sensorResponse = await  fetch(`${process.env.REACT_APP_API_URL}/api/admin/sensor-data`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       
       // Fetch all alerts
-      const alertsResponse = await fetch("http://localhost:5000/api/admin/alerts", {
+      const alertsResponse = await  fetch(`${process.env.REACT_APP_API_URL}/api/admin/alerts`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -67,7 +67,7 @@ const AdminPanel = () => {
     
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:5000/api/admin/users/${userId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/users/${userId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
