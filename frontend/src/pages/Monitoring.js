@@ -78,7 +78,7 @@ const Monitoring = () => {
   const fetchPerformanceMetrics = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/monitoring/metrics", {
+      const response = await  fetch(`${process.env.REACT_APP_API_URL}/api/monitoring/metrics`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -100,6 +100,8 @@ const Monitoring = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch("http://localhost:5000/api/monitoring/logs?type=errors&limit=20", {
+         fetch(`${process.env.REACT_APP_API_URL}/api/monitoring/logs?type=errors&limit=20`, {
+        
         headers: {
           Authorization: `Bearer ${token}`,
         },
