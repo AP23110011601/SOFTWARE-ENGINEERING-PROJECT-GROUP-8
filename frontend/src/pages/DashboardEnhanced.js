@@ -102,7 +102,7 @@ const DashboardEnhanced = () => {
   const fetchDashboardData = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/sensor", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/sensor`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
