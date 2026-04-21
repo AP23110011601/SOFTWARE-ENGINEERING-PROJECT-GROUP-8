@@ -10,7 +10,9 @@ const app = express();
 
 // ✅ MIDDLEWARE
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: "https://frontend-app-afky.onrender.com"
+}));
 
 // ROUTES IMPORTS
 const sensorRoutes = require("./routes/sensor");
