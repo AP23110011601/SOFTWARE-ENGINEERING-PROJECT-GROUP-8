@@ -5,7 +5,7 @@ import io
 import numpy as np
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://frontend-app.onrender.com"])
 
 # ─────────────────────────────────────────────
 # Model state
@@ -214,5 +214,7 @@ def predict_disease():
 
 # ─────────────────────────────────────────────
 if __name__ == "__main__":
-    print("[START] SmartAgri ML Engine starting on port 5001 ...")
-    app.run(host="0.0.0.0", port=5001, debug=False)
+    import os
+    port = int(os.environ.get("PORT", 10000))
+    print(f"[START] SmartAgri ML Engine starting on port {port} ...")
+    app.run(host="0.0.0.0", port=port, debug=False)
