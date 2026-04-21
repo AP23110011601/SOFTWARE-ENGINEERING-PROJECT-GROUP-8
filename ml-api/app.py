@@ -48,6 +48,8 @@ else:
 # ─────────────────────────────────────────────
 DISEASE_MODEL_PATH = os.path.join(BASE_DIR, "best_disease_model.h5")
 CLASS_NAMES_PATH = os.path.join(BASE_DIR, "class_names.txt")
+print("Crop path:", CROP_MODEL_PATH, os.path.exists(CROP_MODEL_PATH))
+print("Disease path:", DISEASE_MODEL_PATH, os.path.exists(DISEASE_MODEL_PATH))
 
 if os.path.exists(DISEASE_MODEL_PATH):
     try:
