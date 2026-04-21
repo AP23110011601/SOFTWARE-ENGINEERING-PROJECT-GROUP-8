@@ -20,7 +20,7 @@ const AdminUsers = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/admin/users", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -45,7 +45,7 @@ const AdminUsers = () => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/admin/users/${userId}`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/users/${userId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -64,7 +64,7 @@ const AdminUsers = () => {
   const handleToggleStatus = async (userId, currentStatus) => {
     try {
       const token = localStorage.getItem("token");
-      await fetch(`http://localhost:5000/api/admin/users/${userId}/toggle-status`, {
+      await fetch(`${process.env.REACT_APP_API_URL}/api/admin/users/${userId}/toggle-status`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ active: !currentStatus }),
