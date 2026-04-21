@@ -1,7 +1,9 @@
-Flask==3.0.0
-flask-cors==4.0.0
-numpy==1.26.0
-pandas==2.1.1
-scikit-learn==1.6.1
-tensorflow==2.14.0
-Pillow==10.0.1
+flask
+flask-cors
+gunicorn
+numpy
+pandas
+scikit-learn
+tensorflow
+pillow
+joblib
