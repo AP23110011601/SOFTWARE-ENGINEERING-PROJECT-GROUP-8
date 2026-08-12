@@ -32,7 +32,7 @@ const CropRecommendation = () => {
           headers: { "Authorization": `Bearer ${token}` }
         });
       }
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/sensor/latest`, {
+  const res = await fetch(`${process.env.REACT_APP_ML_API_URL}/predict-crop`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       const data = await res.json();
