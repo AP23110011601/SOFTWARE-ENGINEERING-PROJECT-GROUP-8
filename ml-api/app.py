@@ -1,17 +1,17 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+
 import os
 import io
-import pickle
 import traceback
 import numpy as np
+import joblib
 
 from PIL import Image
 
 
 app = Flask(__name__)
 
-# Allow frontend connection
 CORS(app)
 
 
@@ -28,6 +28,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 crop_model = None
 scaler = None
+
 disease_model = None
 disease_classes = []
 
@@ -35,8 +36,9 @@ USE_FALLBACK_CROP = False
 USE_FALLBACK_DISEASE = False
 
 
+
 # =====================================================
-# FILE PATHS
+# MODEL PATHS
 # =====================================================
 
 CROP_MODEL_PATH = os.path.join(
@@ -60,21 +62,27 @@ CLASS_NAMES_PATH = os.path.join(
 )
 
 
-print("==============================")
-print("Checking Model Files")
+
+print("\n==============================")
+print("MODEL FILE CHECK")
 print("==============================")
 
-print("Crop Model:", CROP_MODEL_PATH,
+print("Crop Model:",
+      CROP_MODEL_PATH,
       os.path.exists(CROP_MODEL_PATH))
 
-print("Scaler:", SCALER_PATH,
+print("Scaler:",
+      SCALER_PATH,
       os.path.exists(SCALER_PATH))
 
-print("Disease Model:", DISEASE_MODEL_PATH,
+print("Disease Model:",
+      DISEASE_MODEL_PATH,
       os.path.exists(DISEASE_MODEL_PATH))
 
-print("Classes:", CLASS_NAMES_PATH,
+print("Classes:",
+      CLASS_NAMES_PATH,
       os.path.exists(CLASS_NAMES_PATH))
+
 
 
 # =====================================================
@@ -85,11 +93,13 @@ try:
 
     if os.path.exists(CROP_MODEL_PATH) and os.path.exists(SCALER_PATH):
 
-        with open(CROP_MODEL_PATH, "rb") as f:
-            crop_model = pickle.load(f)
+        crop_model = joblib.load(
+            CROP_MODEL_PATH
+        )
 
-        with open(SCALER_PATH, "rb") as f:
-            scaler = pickle.load(f)
+        scaler = joblib.load(
+            SCALER_PATH
+        )
 
         print("[SUCCESS] Crop model loaded")
 
@@ -99,12 +109,13 @@ try:
         USE_FALLBACK_CROP = True
 
 
-except Exception as e:
+except Exception:
 
     print("[ERROR] Crop model loading failed")
     traceback.print_exc()
 
     USE_FALLBACK_CROP = True
+
 
 
 
@@ -121,7 +132,8 @@ try:
 
         disease_model = tf.keras.models.load_model(
             DISEASE_MODEL_PATH,
-            compile=False
+            compile=False,
+            safe_mode=False
         )
 
 
@@ -130,11 +142,11 @@ try:
 
         if os.path.exists(CLASS_NAMES_PATH):
 
-            with open(CLASS_NAMES_PATH,"r") as f:
+            with open(CLASS_NAMES_PATH, "r") as f:
 
                 disease_classes = [
-                    line.strip()
-                    for line in f.readlines()
+                    x.strip()
+                    for x in f.readlines()
                 ]
 
         else:
@@ -155,20 +167,20 @@ try:
 
 
 
-except Exception as e:
+except Exception:
 
     print("[ERROR] Disease model loading failed")
-
     traceback.print_exc()
 
     USE_FALLBACK_DISEASE = True
 
 
 
-# =====================================================
-# FALLBACK CROP LOGIC
-# =====================================================
 
+
+# =====================================================
+# FALLBACK CROP
+# =====================================================
 
 def fallback_crop_predict(
         N,
@@ -180,10 +192,10 @@ def fallback_crop_predict(
         rainfall):
 
 
-    if temperature > 25:
+    if rainfall > 150:
         return "Rice"
 
-    elif rainfall < 80:
+    elif temperature < 25:
         return "Wheat"
 
     else:
@@ -191,10 +203,10 @@ def fallback_crop_predict(
 
 
 
-# =====================================================
-# FALLBACK DISEASE LOGIC
-# =====================================================
 
+# =====================================================
+# FALLBACK DISEASE
+# =====================================================
 
 def fallback_disease_predict():
 
@@ -206,10 +218,11 @@ def fallback_disease_predict():
 
 
 
+
+
 # =====================================================
 # HOME API
 # =====================================================
-
 
 @app.route("/")
 def home():
@@ -238,10 +251,11 @@ def home():
 
 
 
+
+
 # =====================================================
 # CROP PREDICTION
 # =====================================================
-
 
 @app.route(
     "/predict-crop",
@@ -249,7 +263,6 @@ def home():
 )
 
 def predict_crop():
-
 
     try:
 
@@ -269,14 +282,15 @@ def predict_crop():
         ]
 
 
-        if crop_model and scaler:
+        if crop_model is not None and scaler is not None:
 
 
-            scaled=scaler.transform(
+            scaled = scaler.transform(
                 [features]
             )
 
-            prediction=crop_model.predict(
+
+            prediction = crop_model.predict(
                 scaled
             )
 
@@ -291,7 +305,7 @@ def predict_crop():
 
 
 
-        crop=fallback_crop_predict(
+        crop = fallback_crop_predict(
             *features
         )
 
@@ -305,7 +319,10 @@ def predict_crop():
         })
 
 
+
     except Exception as e:
+
+        traceback.print_exc()
 
         return jsonify({
 
@@ -316,10 +333,11 @@ def predict_crop():
 
 
 
+
+
 # =====================================================
 # DISEASE PREDICTION
 # =====================================================
-
 
 @app.route(
     "/predict-disease",
@@ -328,37 +346,36 @@ def predict_crop():
 
 def predict_disease():
 
-
     try:
 
 
         file=request.files["image"]
 
-
         image_bytes=file.read()
 
 
 
-        if disease_model:
+        if disease_model is not None:
 
 
-            img=Image.open(
+            img = Image.open(
                 io.BytesIO(image_bytes)
             )
 
 
-            img=img.convert("RGB")
+            img = img.convert(
+                "RGB"
+            )
 
 
-            img=img.resize(
+            img = img.resize(
                 (224,224)
             )
 
 
             img_array=np.array(img)
 
-
-            img_array=img_array/255.0
+            img_array=img_array / 255.0
 
 
             img_array=np.expand_dims(
@@ -372,8 +389,8 @@ def predict_disease():
             )
 
 
-            index=np.argmax(
-                result[0]
+            index=int(
+                np.argmax(result[0])
             )
 
 
@@ -383,6 +400,7 @@ def predict_disease():
             confidence=float(
                 result[0][index]
             )
+
 
 
             return jsonify({
@@ -397,6 +415,7 @@ def predict_disease():
                 "fallback":False
 
             })
+
 
 
 
@@ -416,11 +435,10 @@ def predict_disease():
         })
 
 
+
     except Exception as e:
 
-
         traceback.print_exc()
-
 
         return jsonify({
 
@@ -431,13 +449,12 @@ def predict_disease():
 
 
 
-# =====================================================
-# RUN SERVER
-# =====================================================
 
+# =====================================================
+# RUN
+# =====================================================
 
 if __name__=="__main__":
-
 
     port=int(
         os.environ.get(
@@ -448,9 +465,6 @@ if __name__=="__main__":
 
 
     app.run(
-
         host="0.0.0.0",
-
         port=port
-
     )
