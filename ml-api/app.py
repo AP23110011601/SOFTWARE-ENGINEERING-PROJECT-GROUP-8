@@ -15,11 +15,13 @@ app = Flask(__name__)
 CORS(app)
 
 
+
 # =====================================================
 # BASE DIRECTORY
 # =====================================================
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 
 # =====================================================
@@ -41,47 +43,23 @@ USE_FALLBACK_DISEASE = False
 # MODEL PATHS
 # =====================================================
 
-CROP_MODEL_PATH = os.path.join(
-    BASE_DIR,
-    "crop_model.pkl"
-)
+CROP_MODEL_PATH = os.path.join(BASE_DIR, "crop_model.pkl")
+SCALER_PATH = os.path.join(BASE_DIR, "scaler.pkl")
 
-SCALER_PATH = os.path.join(
-    BASE_DIR,
-    "scaler.pkl"
-)
-
-DISEASE_MODEL_PATH = os.path.join(
-    BASE_DIR,
-    "best_disease_model.h5"
-)
-
-CLASS_NAMES_PATH = os.path.join(
-    BASE_DIR,
-    "class_names.txt"
-)
+DISEASE_MODEL_PATH = os.path.join(BASE_DIR, "best_disease_model.h5")
+CLASS_NAMES_PATH = os.path.join(BASE_DIR, "class_names.txt")
 
 
 
-print("\n==============================")
+print("==============================")
 print("MODEL FILE CHECK")
 print("==============================")
 
-print("Crop Model:",
-      CROP_MODEL_PATH,
-      os.path.exists(CROP_MODEL_PATH))
+print("Crop:", os.path.exists(CROP_MODEL_PATH))
+print("Scaler:", os.path.exists(SCALER_PATH))
+print("Disease:", os.path.exists(DISEASE_MODEL_PATH))
+print("Classes:", os.path.exists(CLASS_NAMES_PATH))
 
-print("Scaler:",
-      SCALER_PATH,
-      os.path.exists(SCALER_PATH))
-
-print("Disease Model:",
-      DISEASE_MODEL_PATH,
-      os.path.exists(DISEASE_MODEL_PATH))
-
-print("Classes:",
-      CLASS_NAMES_PATH,
-      os.path.exists(CLASS_NAMES_PATH))
 
 
 
@@ -105,16 +83,19 @@ try:
 
     else:
 
-        print("[WARNING] Crop model files missing")
+        print("[WARNING] Crop files missing")
         USE_FALLBACK_CROP = True
 
 
-except Exception:
+except Exception as e:
 
-    print("[ERROR] Crop model loading failed")
+    print("[ERROR] Crop model failed")
+    print(e)
+
     traceback.print_exc()
 
     USE_FALLBACK_CROP = True
+
 
 
 
@@ -127,31 +108,31 @@ try:
 
     if os.path.exists(DISEASE_MODEL_PATH):
 
-        import tensorflow as tf
+        import keras
 
 
-        disease_model = tf.keras.models.load_model(
+        disease_model = keras.models.load_model(
             DISEASE_MODEL_PATH,
-            compile=False,
-            safe_mode=False
+            compile=False
         )
 
 
         print("[SUCCESS] Disease model loaded")
 
 
+
         if os.path.exists(CLASS_NAMES_PATH):
 
-            with open(CLASS_NAMES_PATH, "r") as f:
+            with open(CLASS_NAMES_PATH,"r") as f:
 
                 disease_classes = [
-                    x.strip()
-                    for x in f.readlines()
+                    line.strip()
+                    for line in f.readlines()
                 ]
 
         else:
 
-            disease_classes = [
+            disease_classes=[
                 "Healthy",
                 "Leaf Blight",
                 "Rust",
@@ -160,19 +141,21 @@ try:
             ]
 
 
+
     else:
 
         print("[WARNING] Disease model missing")
-        USE_FALLBACK_DISEASE = True
+        USE_FALLBACK_DISEASE=True
 
 
 
-except Exception:
+except Exception as e:
 
-    print("[ERROR] Disease model loading failed")
+    print("[ERROR] Disease model failed")
+
     traceback.print_exc()
 
-    USE_FALLBACK_DISEASE = True
+    USE_FALLBACK_DISEASE=True
 
 
 
@@ -193,13 +176,19 @@ def fallback_crop_predict(
 
 
     if rainfall > 150:
+
         return "Rice"
 
+
     elif temperature < 25:
+
         return "Wheat"
 
+
     else:
+
         return "Maize"
+
 
 
 
@@ -221,7 +210,7 @@ def fallback_disease_predict():
 
 
 # =====================================================
-# HOME API
+# STATUS API
 # =====================================================
 
 @app.route("/")
@@ -233,11 +222,12 @@ def home():
 
         "models_loaded":{
 
-            "crop": crop_model is not None,
+            "crop":crop_model is not None,
 
-            "disease": disease_model is not None
+            "disease":disease_model is not None
 
         },
+
 
         "fallback":{
 
@@ -253,8 +243,9 @@ def home():
 
 
 
+
 # =====================================================
-# CROP PREDICTION
+# CROP API
 # =====================================================
 
 @app.route(
@@ -282,22 +273,23 @@ def predict_crop():
         ]
 
 
-        if crop_model is not None and scaler is not None:
+
+        if crop_model and scaler:
 
 
-            scaled = scaler.transform(
+            scaled=scaler.transform(
                 [features]
             )
 
 
-            prediction = crop_model.predict(
+            result=crop_model.predict(
                 scaled
             )
 
 
             return jsonify({
 
-                "crop":str(prediction[0]),
+                "crop":str(result[0]),
 
                 "fallback":False
 
@@ -305,7 +297,7 @@ def predict_crop():
 
 
 
-        crop = fallback_crop_predict(
+        crop=fallback_crop_predict(
             *features
         )
 
@@ -322,7 +314,9 @@ def predict_crop():
 
     except Exception as e:
 
+
         traceback.print_exc()
+
 
         return jsonify({
 
@@ -336,7 +330,7 @@ def predict_crop():
 
 
 # =====================================================
-# DISEASE PREDICTION
+# DISEASE API
 # =====================================================
 
 @app.route(
@@ -349,48 +343,43 @@ def predict_disease():
     try:
 
 
-        file=request.files["image"]
-
-        image_bytes=file.read()
+        image=request.files["image"]
 
 
+        img=Image.open(
+            io.BytesIO(image.read())
+        )
 
-        if disease_model is not None:
+
+        img=img.convert("RGB")
+
+        img=img.resize(
+            (224,224)
+        )
 
 
-            img = Image.open(
-                io.BytesIO(image_bytes)
+        img=np.array(img)
+
+        img=img/255.0
+
+
+        img=np.expand_dims(
+            img,
+            axis=0
+        )
+
+
+
+        if disease_model:
+
+
+            prediction=disease_model.predict(
+                img
             )
 
 
-            img = img.convert(
-                "RGB"
-            )
-
-
-            img = img.resize(
-                (224,224)
-            )
-
-
-            img_array=np.array(img)
-
-            img_array=img_array / 255.0
-
-
-            img_array=np.expand_dims(
-                img_array,
-                axis=0
-            )
-
-
-            result=disease_model.predict(
-                img_array
-            )
-
-
-            index=int(
-                np.argmax(result[0])
+            index=np.argmax(
+                prediction[0]
             )
 
 
@@ -398,9 +387,8 @@ def predict_disease():
 
 
             confidence=float(
-                result[0][index]
+                prediction[0][index]
             )
-
 
 
             return jsonify({
@@ -418,8 +406,7 @@ def predict_disease():
 
 
 
-
-        disease,confidence,cure = fallback_disease_predict()
+        disease,confidence,cure=fallback_disease_predict()
 
 
         return jsonify({
@@ -438,7 +425,9 @@ def predict_disease():
 
     except Exception as e:
 
+
         traceback.print_exc()
+
 
         return jsonify({
 
@@ -450,11 +439,13 @@ def predict_disease():
 
 
 
+
 # =====================================================
-# RUN
+# START SERVER
 # =====================================================
 
 if __name__=="__main__":
+
 
     port=int(
         os.environ.get(
